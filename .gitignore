@@ -1,0 +1,13 @@
+
+remote
+.Rproj.user
+*.Rproj
+*.Rproj
+.Rhistory
+CLAUDE.md
+.claude/settings.local.json
+data/ 
+_targets/
+__pycache__/
+*.pyc
+.claude/ 

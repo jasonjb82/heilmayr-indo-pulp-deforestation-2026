@@ -1,0 +1,41 @@
+# Data & Output (downloaded from external storage like Zenodo)
+remote/01_data_replication/
+data/
+output/
+downloads/
+temp/
+
+# Large data file extensions (catches files in nested directories)
+*.zip
+*.tar.gz
+*.csv
+*.rds
+*.parquet
+*.gpkg
+*.tif
+*.nc
+
+# Targets pipeline cache
+_targets/
+_targets.R.bak
+
+# Local R package library & renv caches
+renv/library/
+renv/staging/
+renv/cache/
+renv/python/
+
+# IDE, Project, and Session artifacts
+.Rhistory
+.RData
+.Rproj.user/
+.positron/
+*.Rproj
+
+# Version Control
+.git/
+.gitignore
+
+# Operating System Junk
+.DS_Store
+Thumbs.db
