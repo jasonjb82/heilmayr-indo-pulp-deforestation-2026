@@ -28,7 +28,7 @@ The pipeline fetches raw spatial and tabular data from Zenodo, executes all spat
 ├── Dockerfile                 # Container image specification for isolated builds
 ├── .dockerignore              # Rules to exclude large data files from Docker context
 ├── README.md                  # Replication documentation
-└── remote/                    # Local storage for raw Zenodo replication data
+└── data/                      # Local storage for raw Zenodo replication data and outputs (figures/text statistics)
 ```
 
 ---
@@ -37,7 +37,7 @@ The pipeline fetches raw spatial and tabular data from Zenodo, executes all spat
 
 All required raw input files are archived on Zenodo ([DOI: 10.5281/zenodo.21542417](https://doi.org/10.5281/zenodo.21542417)).
 
-You do not need to download raw datasets manually. The `zenodo_data_check` target in `_targets.R` automatically checks for local data and downloads `01_data_replication.zip` into `remote/01_data_replication/` during the first pipeline execution if files are absent.
+You do not need to download raw datasets manually. The `zenodo_data_check` target in `_targets.R` automatically checks for local data and downloads `01_data_replication.zip` into `data/01_data_replication/` during the first pipeline execution if files are absent.
 
 ---
 
@@ -105,7 +105,7 @@ You can execute the replication workflow through an interactive R session or ins
    targets::tar_make()
    ```
 
-Generated output figures, tables, and text statistics will automatically be saved into the `output/` directory.
+Generated figures are automatically saved into the `data/01_data_replication/04_results/` directory and the text statistics are saved into `data/01_data_replication/02_tables/` (paper_text_snippets.txt).
 
 ---
 
