@@ -12,7 +12,7 @@ This repository contains the complete code, targets pipeline, and replication ma
 
 ## Overview
 
-This repository uses the [`targets`](https://docs.ropensci.org/targets/) workflow management package alongside [`renv`](https://rstudio.github.io/renv/) to build an automated, fully reproducible pipeline for creating the figures and statistics on deforestation, concession land-use change, and supply chain dynamics in Indonesia's pulpwood sector.
+This repository uses the [`targets`](https://docs.ropensci.org/targets/) workflow management package alongside [`renv`](https://rstudio.github.io/renv/) to build an automated, fully reproducible pipeline for creating the figures and statistics on deforestation, pulp expansion areas, concession land-use change, and supply chain dynamics in Indonesia's pulpwood sector.
 
 The pipeline fetches raw spatial and tabular data from Zenodo, executes all spatial overlay and statistical transformations, and generates the relevant summary figures and SI tables reported in the paper.
 
@@ -28,7 +28,7 @@ The pipeline fetches raw spatial and tabular data from Zenodo, executes all spat
 ├── Dockerfile                 # Container image specification for isolated builds
 ├── .dockerignore              # Rules to exclude large data files from Docker context
 ├── README.md                  # Replication documentation
-└── data/                      # Local storage for raw Zenodo replication data and outputs (figures/text statistics)
+└── data/                      # Local storage for raw Zenodo replication data and outputs (figures, table, text statistics)
 ```
 
 ---
@@ -230,7 +230,7 @@ You can execute the replication workflow through an interactive R session or ins
 Outputs are automatically populated into the following locations:
 
 * **Figures:** `data/01_data_replication/04_results/`
-* **Text Statistics:** `data/01_data_replication/02_tables/paper_text_snippets.txt`
+* **Text statistics and pulp expansion table:** `data/01_data_replication/02_tables/paper_text_snippets.txt` and `data/01_data_replication/02_tables/pulp_expansion_areas_all_2001_2022.csv`
 
 ---
 
