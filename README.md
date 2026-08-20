@@ -12,7 +12,7 @@ This repository contains the complete code, targets pipeline, and replication ma
 
 ## Overview
 
-This repository uses the [`targets`](https://docs.ropensci.org/targets/) workflow management package alongside [`renv`](https://rstudio.github.io/renv/) to construct an automated, fully reproducible pipeline analyzing deforestation, concession land use change, and corporate supply chain dynamics in Indonesia's pulpwood sector.
+This repository uses the [`targets`](https://docs.ropensci.org/targets/) workflow management package alongside [`renv`](https://rstudio.github.io/renv/) to build an automated, fully reproducible pipeline for creating the figures and statistics on deforestation, concession land-use change, and supply chain dynamics in Indonesia's pulpwood sector.
 
 The pipeline fetches raw spatial and tabular data from Zenodo, executes all spatial overlay and statistical transformations, and generates the relevant summary figures and SI tables reported in the paper.
 
