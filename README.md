@@ -234,19 +234,36 @@ Outputs are automatically populated into the following locations:
 
 ---
 
-### Option B: Docker Container (Fully Isolated Execution)
+### Option B: Docker Container (Isolated Build)
 
-To build and run the pipeline inside a self-contained Linux environment:
+Docker standardizes execution across systems, but build flags and host folder mounting syntax vary slightly depending on your platform and terminal environment.
 
-1. **Build the Docker image:**
+#### 1. Build the container image
+
+* **Linux / Windows / Intel Mac:**
+  ```bash
+  docker build -t test-indo-defor
+  ```
+
+#### 2. **Run the container pipeline:**
+   
+To run the container and persist generated figures and tables directly back to your local disk, execute the command matching your operating system or shell:
+
+* **Linux / Windows / Intel Mac:**
    ```bash
-   docker build -t test-indo-defor .
+   docker run --rm -v "$(pwd)/data:/app/data" test-indo-defor
    ```
 
-2. **Run the container pipeline:**
-   ```bash
-   docker run --rm test-indo-defor
+* **Windows PowerShell:**
+   ```PowerShell
+   docker run --rm -v "${PWD}/data:/app/data" test-indo-defor
    ```
+
+* **Windows Command Prompt (CMD):**
+   ```DOS
+   docker run --rm -v "%cd%/data:/app/data" test-indo-defor
+   ```
+Memory Requirement: Ensure Docker Desktop has at least 8 GB–12 GB RAM assigned under Settings > Resources > Memory (macOS/Windows) to prevent out-of-memory crashes during spatial operations.
 
 ## Authors & Citation
 
