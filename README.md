@@ -1,2 +1,2 @@
-# Indonesia’s pulp sector risks reversing progress towards zero deforestation
+# Rising risk of deforestation in Indonesia’s pulp sector
 Collaboration between WWI and Conservation Economics Lab, UCSB
