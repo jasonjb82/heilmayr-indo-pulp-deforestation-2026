@@ -1,4 +1,4 @@
-# Replication Package: Indonesia’s pulp sector risks reversing progress towards zero deforestation
+# Replication Package: Rising risk of deforestation in Indonesia’s pulp sector
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21542417.svg)](https://doi.org/10.5281/zenodo.21542417)
 [![R-CMD-check](https://img.shields.io/badge/R-4.4.2-blue.svg)](https://www.r-project.org/)
