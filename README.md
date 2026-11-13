@@ -59,17 +59,18 @@ The pipeline has 127 targets. The diagram below summarises how its sections
 connect; run `targets::tar_visnetwork()` for the full graph.
 
 ```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
 graph LR
-  Z[("Zenodo data<br/>01_data_replication.zip")] --> B["Data ingestion<br/>and cleaning"]
-  B --> F1["Figure 1<br/>deforestation trends"]
-  B --> F2["Figure 2<br/>deforestation by supplier group"]
+  Z[("Zenodo input data")] --> B["Data ingestion and cleaning"]
+  B --> F1["Figure 1: deforestation trends"]
+  B --> F2["Figure 2: deforestation by supplier group"]
   B --> AT["SI concession atlas"]
   B --> T2["SI expansion areas table"]
-  B --> RS["Remote sensing<br/>accuracy (SI 3)"]
-  B --> MAI["Productivity trends<br/>(SI 4.1)"]
-  B --> EL["Deforestation elasticity<br/>(SI 4.2, 5)"]
-  B --> RF["Pulp expansion model<br/>(SI 8)"]
-  RF --> SC["Expansion scenarios<br/>Figure 3, SI 4.3, 8.4"]
+  B --> RS["Remote sensing accuracy (SI 3)"]
+  B --> MAI["Productivity trends (SI 4.1)"]
+  B --> EL["Deforestation elasticity (SI 4.2, 5)"]
+  B --> RF["Pulp expansion model (SI 8)"]
+  RF --> SC["Figure 3: expansion scenarios (SI 4.3, 8.4)"]
   MAI --> SC
   F1 --> PS["Paper statistics"]
   F2 --> PS
@@ -77,7 +78,7 @@ graph LR
   MAI --> PS
   EL --> PS
   SC --> PS
-  PS --> MC["Manuscript check<br/>and claims report"]
+  PS --> MC["Manuscript check and claims report"]
 ```
 
 ---
