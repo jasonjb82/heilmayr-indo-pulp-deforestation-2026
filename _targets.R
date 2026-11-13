@@ -41,19 +41,54 @@ tar_source()
 # =========================================================================
 # 3. TARGET PIPELINE DEFINITION
 # =========================================================================
-list(
+pipeline <- list(
   # -----------------------------------------------------------------------
   # A. FILE TRACKING (ZENODO DOWNLOAD LOCATION)
   # -----------------------------------------------------------------------
-
+  # Tracks the small .zenodo_record marker rather than the whole data folder,
+  # so editing one input file only invalidates the targets that use it. The
+  # download runs when the marker is missing (data deleted) or the record ID
+  # below changes. To move to a new Zenodo version, change zenodo_record_id.
+  #
+  # Setting the INDO_PULP_DATA environment variable points the pipeline at an
+  # existing directory instead and skips the download. This is how the authors
+  # run against their working data (remote/01_data) before it is deposited:
+  #   INDO_PULP_DATA=remote/01_data Rscript -e 'targets::tar_make()'
   tar_target(
-    zenodo_data_check,
-    download_zenodo_data(
-      zenodo_record_id = "21542417",
-      output_dir = "data/01_data_replication"
-    ),
-    format = "file"
+    zenodo_marker,
+    {
+      data_override <- Sys.getenv("INDO_PULP_DATA", unset = "")
+      if (nzchar(data_override)) {
+        marker <- file.path(data_override, ".zenodo_record")
+        # The marker holds the folder path so that pointing INDO_PULP_DATA at
+        # a different folder changes its hash and re-routes every input target.
+        # A constant marker hashes the same in every folder, so targets kept
+        # reading the previous folder.
+        label <- paste(
+          "local-override:",
+          normalizePath(data_override, winslash = "/")
+        )
+        if (
+          !file.exists(marker) ||
+            !identical(readLines(marker, warn = FALSE), label)
+        ) {
+          writeLines(label, marker)
+        }
+        marker
+      } else {
+        file.path(
+          download_zenodo_data(
+            zenodo_record_id = "22312822",
+            output_dir = "data/01_data_replication"
+          ),
+          ".zenodo_record"
+        )
+      }
+    },
+    format = "file",
+    cue = tar_cue(mode = "always")
   ),
+  tar_target(zenodo_data_check, dirname(zenodo_marker)),
 
   tar_target(
     kab_file,
@@ -95,11 +130,6 @@ list(
     format = "file"
   ),
   tar_target(
-    pulp_prices_file,
-    file.path(zenodo_data_check, "01_in/tables/WPU0911_FRED.csv"),
-    format = "file"
-  ),
-  tar_target(
     pulp_production_file,
     file.path(zenodo_data_check, "01_in/tables/annual_pulp_shr_prod.xlsx"),
     format = "file"
@@ -128,14 +158,6 @@ list(
     format = "file"
   ),
   tar_target(
-    ann_pulp_tbl_file,
-    file.path(
-      zenodo_data_check,
-      "02_out/tables/pulp_expansion_areas_2001_2022.csv"
-    ),
-    format = "file"
-  ),
-  tar_target(
     hti_nonhti_conv_file,
     file.path(
       zenodo_data_check,
@@ -154,21 +176,11 @@ list(
     format = "file"
   ),
   tar_target(
-    rs_acc_file,
-    file.path(zenodo_data_check, "04_results/rs_accuracy_paper_stats.csv"),
-    format = "file"
-  ),
-  tar_target(
     id_annual_exp_file,
     file.path(
       zenodo_data_check,
       "02_out/tables/id_annual_expansion_stats_ttm.csv"
     ),
-    format = "file"
-  ),
-  tar_target(
-    pw_annual_area_file,
-    file.path(zenodo_data_check, "02_out/gee/pulp_annual_area_id.csv"),
     format = "file"
   ),
   tar_target(
@@ -188,21 +200,11 @@ list(
     format = "file"
   ),
   tar_target(
-    groups_reclass_file,
+    hti_ownership_file,
     file.path(
       zenodo_data_check,
-      "01_in/tables/ALIGNED_NAMES_GROUP_HTI_reclassed.csv"
+      "01_in/tables/hti_ownership_master.csv"
     ),
-    format = "file"
-  ),
-  tar_target(
-    scenario_stats_file,
-    file.path(zenodo_data_check, "04_results/scenario_stats.csv"),
-    format = "file"
-  ),
-  tar_target(
-    mai_file,
-    file.path(zenodo_data_check, "04_results/key_parameters.csv"),
     format = "file"
   ),
   tar_target(
@@ -213,6 +215,11 @@ list(
   tar_target(
     cap_df_file,
     file.path(zenodo_data_check, "01_in/wwi/MILLS_EXPORTERS_20200405.xlsx"),
+    format = "file"
+  ),
+  tar_target(
+    remaining_forest_file,
+    file.path(zenodo_data_check, "02_out/tables/hti_remaining_forest_2022.csv"),
     format = "file"
   ),
 
@@ -233,7 +240,6 @@ list(
       select(-`system:index`, -.geo)
   ),
   tar_target(timber_for_pulp, read_ws_data(timber_for_pulp_file)),
-  tar_target(pulp_prices, read_csv(pulp_prices_file, show_col_types = FALSE)),
   tar_target(pulp_production, read_cap_df(pulp_production_file)),
   tar_target(
     hti_conv_timing,
@@ -251,7 +257,7 @@ list(
     )
   ),
   tar_target(samples_hti, read_csv(samples_hti_file, show_col_types = FALSE)),
-  tar_target(ann_pulp_tbl, read_csv(ann_pulp_tbl_file, show_col_types = FALSE)),
+  tar_target(ann_pulp_tbl, calc_annual_pulp_expansion(id_annual_exp_stats)),
   tar_target(hti_nonhti_conv, read_hti_nonhti_conv(hti_nonhti_conv_file)),
   tar_target(
     samples_landuse_ttm,
@@ -261,14 +267,9 @@ list(
     samples_gfc_ttm,
     read_csv(samples_gfc_ttm_file, show_col_types = FALSE)
   ),
-  tar_target(rs_acc_df, read_csv(rs_acc_file, show_col_types = FALSE)),
   tar_target(
     id_annual_exp_stats,
     read_csv(id_annual_exp_file, show_col_types = FALSE)
-  ),
-  tar_target(
-    pw_annual_area_id,
-    read_csv(pw_annual_area_file, show_col_types = FALSE)
   ),
   tar_target(
     pulp_ttm_soil_type,
@@ -279,16 +280,15 @@ list(
     read_csv(kali_exp_file, show_col_types = FALSE)
   ),
   tar_target(
-    groups_reclass_hti,
-    read_csv(groups_reclass_file, show_col_types = FALSE)
+    hti_ownership,
+    read_csv(hti_ownership_file, show_col_types = FALSE)
   ),
-  tar_target(
-    scenario_stats,
-    read_csv(scenario_stats_file, show_col_types = FALSE)
-  ),
-  tar_target(mai_df, read_csv(mai_file, show_col_types = FALSE)),
   tar_target(ws_2015_2022, read_csv(ws_2015_2022_file, show_col_types = FALSE)),
   tar_target(cap_df, read_cap_df(cap_df_file)),
+  tar_target(
+    remaining_forest,
+    read_csv(remaining_forest_file, show_col_types = FALSE)
+  ),
 
   # -----------------------------------------------------------------------
   # C. SCRIPT 1: FIGURE 1 (SUMMARY TRENDS)
@@ -302,13 +302,11 @@ list(
     id_pulp_conv_nonfor,
     clean_pulp_conversion(pulp_nonfor_id, islands_df, "non-forest")
   ),
-  tar_target(pulp_prices_clean, clean_pulp_prices(pulp_prices)),
   tar_target(
-    defor_price_comb,
-    prep_defor_price_comb(
+    defor_by_island,
+    prep_defor_by_island(
       id_pulp_conv_for,
-      id_pulp_conv_nonfor,
-      pulp_prices_clean
+      id_pulp_conv_nonfor
     )
   ),
   tar_target(
@@ -317,20 +315,68 @@ list(
   ),
   tar_target(tl_df, prep_timeline_data(policy_tl)),
 
-  # Panels & Composite Export
-  tar_target(fig1_panel_a, plot_panel_a(defor_price_comb)),
-  tar_target(fig1_panel_b, plot_panel_b(pulp_prod_ratio_merged)),
-  tar_target(fig1_panel_c, plot_panel_c(tl_df)),
-  tar_target(
-    fig1_summary,
-    create_fig1_summary(fig1_panel_a, fig1_panel_b, fig1_panel_c)
-  ),
+  # Figures & figure data.
+  #
+  # Each of these was a panel of one composite until the editors restricted
+  # the main text to Figures 1 and 2. They are now three standalone figures
+  # -- main text Figure 1, SM Figure 2, SM Figure 5 -- each with its own
+  # script, and none carries a panel tag.
+  tar_target(fig1_plot, plot_fig1(defor_by_island)),
   tar_target(
     fig1_files,
     save_fig1(
-      fig1_summary,
-      "data/01_data_replication/04_results/figures/f1_summary_figure.png",
-      "data/01_data_replication/04_results/figures/f1_summary_figure.svg"
+      fig1_plot,
+      "outputs/figures/f1_pulp_driven_deforestation.png",
+      "outputs/figures/f1_pulp_driven_deforestation.svg"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    fig1_data,
+    save_csv_table(
+      defor_by_island,
+      "outputs/figure_data/fig1_deforestation_by_island.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+
+  tar_target(si_fig2_plot, plot_si_fig2(pulp_prod_ratio_merged)),
+  tar_target(
+    si_fig2_files,
+    save_si_fig2(
+      si_fig2_plot,
+      "outputs/figures/si_f2_pulp_production_by_wood_type.png",
+      "outputs/figures/si_f2_pulp_production_by_wood_type.svg"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_fig2_data,
+    save_csv_table(
+      pulp_prod_ratio_merged,
+      "outputs/figure_data/si_f2_pulp_production_by_wood_type.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+
+  tar_target(si_fig5_plot, plot_si_fig5(tl_df)),
+  tar_target(
+    si_fig5_files,
+    save_si_fig5(
+      si_fig5_plot,
+      "outputs/figures/si_f5_policy_timeline.png",
+      "outputs/figures/si_f5_policy_timeline.svg"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_fig5_data,
+    save_csv_table(
+      tl_df,
+      "outputs/figure_data/si_f5_policy_timeline.csv",
+      writer = "readr"
     ),
     format = "file"
   ),
@@ -346,7 +392,24 @@ list(
     fig2_png,
     save_fig2(
       freq_tab_fig2,
-      "data/01_data_replication/04_results/figures/f2_supplier_groups_defor_class_plot.png"
+      "outputs/figures/f2_supplier_groups_defor_class_plot.png"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    fig2_svg,
+    save_fig2(
+      freq_tab_fig2,
+      "outputs/figures/f2_supplier_groups_defor_class_plot.svg"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    fig2_data,
+    save_csv_table(
+      freq_tab_fig2,
+      "outputs/figure_data/fig2_deforestation_by_ownership_and_class.csv",
+      writer = "readr"
     ),
     format = "file"
   ),
@@ -358,8 +421,64 @@ list(
     concession_plots_saved,
     render_and_save_all_concessions(
       hti_annual_lc,
-      "data/01_data_replication/04_results/figures/concessions/"
+      "outputs/figures/concessions/"
     ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # E2. SCRIPT 6: SI SECTION 9 CONCESSION ATLAS (GENERATED PDF APPENDIX)
+  # -----------------------------------------------------------------------
+  # Tracking the template as a file target means editing the layout rebuilds
+  # only the PDF (about two seconds), not the 305 tiles.
+  tar_target(
+    atlas_template_file,
+    "typst/concession_atlas.typ",
+    format = "file"
+  ),
+  tar_target(
+    atlas_meta,
+    build_atlas_metadata(
+      hti_annual_lc,
+      hti_conv_timing,
+      hti_ownership,
+      hti
+    )
+  ),
+  tar_target(
+    concession_tile_pngs,
+    render_and_save_concession_tiles(
+      hti_annual_lc,
+      atlas_meta,
+      "outputs/figures/concession_tiles"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    atlas_data_typ,
+    write_atlas_data_typ(
+      concession_tile_pngs,
+      atlas_meta,
+      "outputs/atlas/atlas_data.typ"
+    ),
+    format = "file"
+  ),
+  # sm_pages = 0 numbers the atlas from 1. The merge script recompiles with the
+  # exported SI's real page count so folios continue that document's numbering.
+  # The PDF embeds the tile images, but atlas_data_typ only lists their paths,
+  # so naming concession_tile_pngs here makes the PDF rebuild when a tile
+  # changes even if the paths do not.
+  tar_target(
+    concession_atlas_pdf,
+    {
+      concession_tile_pngs
+      compile_concession_atlas(
+        atlas_template_file,
+        atlas_data_typ,
+        "outputs/atlas/concession_atlas.pdf",
+        sm_pages = 0L
+      )
+    },
     format = "file"
   ),
 
@@ -401,7 +520,7 @@ list(
     si_table_2_csv,
     save_si_table_2(
       si_table_2_df,
-      "data/01_data_replication/02_out/tables/pulp_expansion_areas_all_2001_2022.csv"
+      "outputs/tables/pulp_expansion_areas_all_2001_2022.csv"
     ),
     format = "file"
   ),
@@ -414,23 +533,402 @@ list(
     calc_paper_stats(
       rs_acc_df = rs_acc_df,
       id_annual_exp_stats = id_annual_exp_stats,
-      pw_annual_area_id = pw_annual_area_id,
       pulp_ttm_soil_type = pulp_ttm_soil_type,
       ws_2015_2022 = ws_2015_2022,
       kali_annual_pulp_exp_stats = kali_annual_pulp_exp_stats,
       hti_nonhti_conv = hti_nonhti_conv,
-      groups_reclass_hti = groups_reclass_hti,
+      hti_ownership = hti_ownership,
       cap_df = cap_df,
       scenario_stats = scenario_stats,
-      mai_df = mai_df
+      mai_df = mai_df,
+      remaining_forest = remaining_forest
     )
   ),
   tar_target(
     paper_stats_txt,
     save_paper_stats(
       paper_stats,
-      "data/01_data_replication/02_out/tables/paper_text_snippets.txt"
+      "outputs/text/paper_text_snippets.txt"
     ),
     format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # H. ANALYSIS 01: RS ACCURACY ASSESSMENT
+  # -----------------------------------------------------------------------
+  # Computes rs_acc_df from the validation sample
+
+  tar_target(
+    validation_xlsx_file,
+    file.path(
+      zenodo_data_check,
+      "01_in/gaveau/Validation_11classes_land-cover-change-map_v2.xlsx"
+    ),
+    format = "file"
+  ),
+  tar_target(rs_acc_results, run_rs_accuracy(validation_xlsx_file)),
+  tar_target(rs_acc_df, rs_acc_results$paper_stats),
+  tar_target(
+    si_table3_csv,
+    save_csv_table(
+      rs_acc_results$si_table3,
+      "outputs/tables/si_table3_class_descriptions.csv"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_table4_csv,
+    save_csv_table(
+      rs_acc_results$si_table4,
+      "outputs/tables/si_table4_change_map_accuracy.csv"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_table5_csv,
+    save_csv_table(
+      rs_acc_results$si_table5,
+      "outputs/tables/si_table5_static_map_accuracy.csv"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    rs_acc_diagnostics_txt,
+    save_text_lines(
+      rs_acc_results$diagnostics,
+      "outputs/text/rs_accuracy_diagnostics.txt"
+    ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # I. ANALYSIS 02: DMAI AND PRODUCTIVITY TRENDS
+  # -----------------------------------------------------------------------
+  # Computes key parameters (mai_df) and concession DMAI from the harvest
+  # record rather than reading 04_results/key_parameters.csv from Zenodo.
+  tar_target(
+    harvest_file,
+    file.path(zenodo_data_check, "02_out/tables/hti_harvest_yr.csv"),
+    format = "file"
+  ),
+  tar_target(mai_results, run_calc_mai(harvest_file, ws_2015_2022)),
+  tar_target(mai_df, mai_results$key_parameters),
+  # .docx output needs pandoc on the PATH
+  tar_target(
+    si_table6_docx,
+    save_mai_table(mai_results, "outputs/tables/si_table6_yield_growth.docx"),
+    format = "file"
+  ),
+  tar_target(
+    si_section3_txt,
+    save_text_lines(
+      mai_results$si_text,
+      "outputs/text/si_section3_statements.txt"
+    ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # J. ANALYSIS 03: DEFORESTATION ELASTICITY (SI SECTIONS 4.2 AND 5)
+  # -----------------------------------------------------------------------
+  # pulp_prices_annual_2001_2024.csv is derived from licensed price data by
+  # scripts/02_data_preparation/19_prep_pulp_prices.R, outside the pipeline.
+  tar_target(
+    defor_long_file,
+    file.path(
+      zenodo_data_check,
+      "02_out/tables/tbl_long_pulp_clearing_gfc_forest.csv"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    grid_admin_file,
+    file.path(zenodo_data_check, "02_out/tables/grid_10km_adm_prov_kab_kec.csv"),
+    format = "file"
+  ),
+  tar_target(
+    pulp_prices_annual_file,
+    file.path(
+      zenodo_data_check,
+      "02_out/tables/pulp_prices_annual_2001_2024.csv"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    gaez_hti_file,
+    file.path(zenodo_data_check, "02_out/tables/gaez_hti_areas.csv"),
+    format = "file"
+  ),
+  tar_target(
+    gaez_grid_file,
+    file.path(zenodo_data_check, "02_out/tables/gaez_grid_share.csv"),
+    format = "file"
+  ),
+  tar_target(
+    mill_prod_file,
+    file.path(zenodo_data_check, "01_in/wwi/MILL_PRODUCTION_2015_2024.xlsx"),
+    format = "file"
+  ),
+  tar_target(
+    elast_results,
+    run_defor_elasticity(
+      defor_long_csv = defor_long_file,
+      grid_admin_csv = grid_admin_file,
+      pulp_prices_csv = pulp_prices_annual_file,
+      gaez_hti_csv = gaez_hti_file,
+      gaez_grid_csv = gaez_grid_file,
+      hti_mai = mai_results$hti_mai,
+      cap_df = cap_df,
+      mill_prod_xlsx = mill_prod_file
+    )
+  ),
+  tar_target(
+    si_table8_csv,
+    save_csv_table(
+      elast_results$si_table8,
+      "outputs/tables/si_table8_aez_productivity.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_fig4_png,
+    save_si_fig4(elast_results, "outputs/figures/si_f4_elasticity.png"),
+    format = "file"
+  ),
+  tar_target(
+    si_sections4_5_txt,
+    save_text_lines(
+      elast_results$si_text,
+      "outputs/text/si_sections4_5_statements.txt"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    elast_diagnostics_txt,
+    save_text_lines(
+      elast_results$diagnostics,
+      "outputs/text/defor_elasticity_diagnostics.txt"
+    ),
+    format = "file"
+  ),
+  # SI Tables 9 and 10; .docx output needs pandoc on the PATH
+  tar_target(
+    si_tables9_10_docx,
+    save_defor_elast_tables(
+      elast_results,
+      main_path = "outputs/tables/si_table9_defor_elasticity.docx",
+      robust_path = "outputs/tables/si_table10_defor_elasticity_robustness.docx"
+    ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # K. ANALYSIS 04: SPATIAL MODEL OF PULP EXPANSION (SI SECTION 8)
+  # -----------------------------------------------------------------------
+  # The model is re-estimated here rather than read from a saved fit. An earlier
+  # version loaded the authors' rf_final_fit.rds because tuning was a near-tie
+  # between mtry 13 and 22 and other package versions could select a different
+  # one. That was traced to ranger drawing its seed from R's ambient RNG stream;
+  # the engine now pins seed = 42, so the tuned mtry no longer depends on how
+  # many random draws upstream code happened to consume. Re-estimation takes
+  # ~15 min and already ran for SM Figure 6 and the Section 8 statements, so
+  # taking predictions from it costs nothing and removes a shipped artefact
+  # from the inputs.
+  tar_target(
+    rf_vars_2017_file,
+    file.path(zenodo_data_check, "02_out/tables/pulp_exp_model_var_1km_2017.csv"),
+    format = "file"
+  ),
+  tar_target(
+    rf_vars_2022_file,
+    file.path(zenodo_data_check, "02_out/tables/pulp_exp_model_var_1km_2022.csv"),
+    format = "file"
+  ),
+  tar_target(
+    rf_results,
+    run_pulp_expansion_model(rf_vars_2017_file, rf_vars_2022_file)
+  ),
+  tar_target(
+    pulp_predictions,
+    rf_results$pulp_predictions
+  ),
+  tar_target(
+    pulp_predictions_csv,
+    save_csv_table(
+      pulp_predictions,
+      "outputs/tables/pulp_predictions.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_fig6_png,
+    save_si_fig6(rf_results, "outputs/figures/si_f6_auc.png"),
+    format = "file"
+  ),
+  tar_target(
+    si_section8_txt,
+    save_text_lines(rf_results$si_text, "outputs/text/si_section8_statements.txt"),
+    format = "file"
+  ),
+  tar_target(
+    rf_diagnostics_txt,
+    save_text_lines(
+      rf_results$diagnostics,
+      "outputs/text/rf_model_diagnostics.txt"
+    ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # L. ANALYSIS 05: PULP EXPANSION SCENARIOS (FIGURE 3, SI 4.3 AND 8.4)
+  # -----------------------------------------------------------------------
+  # Computes scenario_stats from the predictions rather than reading
+  # 04_results/scenario_stats.csv from Zenodo.
+  tar_target(
+    scenario_results,
+    run_pulp_expansion_scenarios(
+      pulp_predictions = pulp_predictions,
+      mai_df = mai_df,
+      rs_acc_df = rs_acc_df,
+      cap_df = cap_df,
+      ws_2015_2022 = ws_2015_2022,
+      kab = kab
+    )
+  ),
+  tar_target(scenario_stats, scenario_results$scenario_stats),
+  tar_target(
+    scenario_stats_csv,
+    save_csv_table(
+      scenario_stats,
+      "outputs/tables/scenario_stats.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+  # The old Figure 3 is now SM Figure 7 (the map) and SM Table 13 (the
+  # expansion table that used to be its lower panel).
+  tar_target(
+    si_fig7_png,
+    save_si_fig7(scenario_results, "outputs/figures/si_f7_expansion_map.png"),
+    format = "file"
+  ),
+  tar_target(
+    si_fig7_svg,
+    save_si_fig7(scenario_results, "outputs/figures/si_f7_expansion_map.svg"),
+    format = "file"
+  ),
+  tar_target(
+    si_table13_docx,
+    save_si_table13(
+      scenario_results,
+      "outputs/tables/si_table13_expansion_areas.docx"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_fig7_data,
+    save_csv_table(
+      scenario_results$si_fig7_data,
+      "outputs/figure_data/si_f7_expansion_map_cells.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_table13_data,
+    save_csv_table(
+      scenario_results$si_table13_data,
+      "outputs/tables/si_table13_expansion_areas.csv",
+      writer = "readr"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    si_sections4_8_txt,
+    save_text_lines(
+      scenario_results$si_text,
+      "outputs/text/si_sections4_8_statements.txt"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    scenario_diagnostics_txt,
+    save_text_lines(
+      scenario_results$diagnostics,
+      "outputs/text/scenario_diagnostics.txt"
+    ),
+    format = "file"
+  ),
+
+  # -----------------------------------------------------------------------
+  # M. CHECK PAPER STATS AGAINST THE MANUSCRIPT
+  # -----------------------------------------------------------------------
+  # manuscript_values.csv holds each number as the manuscript prints it.
+  # Update it whenever the manuscript text changes.
+  tar_target(
+    manuscript_values_file,
+    "manuscript/manuscript_values.csv",
+    format = "file"
+  ),
+  tar_target(
+    manuscript_check,
+    check_manuscript_values(paper_stats, manuscript_values_file)
+  ),
+  tar_target(
+    manuscript_check_csv,
+    save_manuscript_check(
+      manuscript_check,
+      "outputs/text/manuscript_check.csv"
+    ),
+    format = "file"
+  )
+)
+
+# =========================================================================
+# 4. CLAIMS REPORT
+# =========================================================================
+# targets does not let a running pipeline inspect its own graph, so the
+# dependency graph is recorded here, when the pipeline is defined, and
+# injected into the report's command with !!. Any change to a target's
+# command changes the graph and so rebuilds the report.
+pipeline_graph <- pipeline_dependency_graph(pipeline)
+
+c(
+  pipeline,
+  list(
+    tar_target(
+      claims_report_md,
+      build_claims_report(
+        paper_stats = paper_stats,
+        manuscript_check = manuscript_check,
+        si_sources = list(
+          list(
+            title = "SI Section 3: productivity trends",
+            target = "mai_results",
+            text = mai_results$si_text
+          ),
+          list(
+            title = "SI Sections 4.2 and 5: deforestation elasticity",
+            target = "elast_results",
+            text = elast_results$si_text
+          ),
+          list(
+            title = "SI Section 8: spatial model (re-estimation)",
+            target = "rf_results",
+            text = rf_results$si_text
+          ),
+          list(
+            title = "Main text and SI Sections 4.3 and 8.4: expansion scenarios",
+            target = "scenario_results",
+            text = scenario_results$si_text
+          )
+        ),
+        graph = !!pipeline_graph,
+        file_path = "outputs/text/claims_report.md"
+      ),
+      format = "file"
+    )
   )
 )
