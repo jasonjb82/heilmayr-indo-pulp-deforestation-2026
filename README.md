@@ -26,8 +26,10 @@ produces:
 - the remote sensing accuracy assessment, plantation productivity trends,
   deforestation price elasticities, the spatial model of pulpwood expansion
   and the expansion scenarios
-- the SI concession atlas (one page per pulpwood concession)
-- every number cited in the paper, checked against the published manuscript
+- the SI concession atlas (annual land cover change charts for each of the
+  305 pulpwood concessions)
+- the numbers reported in the main text and SI, each checked against the
+  published manuscript (74 values)
 
 The input data on Zenodo were prepared outside this pipeline (sample
 extraction in Google Earth Engine and data preparation in R and Python). The
@@ -92,8 +94,9 @@ redistributed. The pipeline uses the derived annual price series
   from Google Fonts when the figures are drawn
 - **pandoc:** needed for the `.docx` SI tables (included in the Docker image)
 - **Typst:** needed for the SI concession atlas (installed in the Docker image)
-- **Run time:** about 50 minutes for a full run, of which about 30 minutes
-  estimate the pulp expansion model. Later runs rebuild only what changed.
+- **Run time:** about 30–50 minutes for a full run, depending on the machine,
+  of which 10–30 minutes estimate the pulp expansion model. Later runs rebuild
+  only what changed.
 
 ---
 
@@ -188,16 +191,16 @@ All results are written to `outputs/`:
 
 | Folder | Contents |
 |---|---|
-| `outputs/figures/` | Figures 1–3 and the SI figures (PNG and SVG); per-concession land cover figures in `concessions/` and `concession_tiles/` |
-| `outputs/figure_data/` | Data behind Figures 1–3 (CSV) |
+| `outputs/figures/` | Figures 1–3 and the SI figures (PNG, most also as SVG); per-concession land cover figures in `concessions/` and `concession_tiles/` |
+| `outputs/figure_data/` | Data behind Figures 1–3 and SI Figures 2, 5 and 7 (CSV) |
 | `outputs/tables/` | SI tables (CSV and `.docx`), pulp expansion predictions and scenario results |
 | `outputs/text/` | Statements reported in the paper and SI, model diagnostics, and the manuscript check |
 | `outputs/atlas/` | SI concession atlas (PDF) |
 
-`outputs/text/manuscript_check.csv` compares every number reported in the
-paper (`manuscript/manuscript_values.csv`) with the value the pipeline
-computes. `outputs/text/claims_report.md` lists each claim with the targets
-and input files it comes from.
+`outputs/text/manuscript_check.csv` compares each number listed in
+`manuscript/manuscript_values.csv` (as printed in the paper) with the value
+the pipeline computes. `outputs/text/claims_report.md` lists each of these
+claims with its check result and the functions and input files it comes from.
 
 ---
 
