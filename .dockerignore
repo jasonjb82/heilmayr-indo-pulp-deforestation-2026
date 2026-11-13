@@ -1,41 +1,27 @@
-# Data & Output (downloaded from external storage like Zenodo)
-remote/01_data_replication/
+# Data (downloaded from Zenodo at run time, so not baked into the image).
+# data/ is where the pipeline downloads the Zenodo deposit
+# (_targets.R: output_dir = "data/01_data_replication").
 data/
-output/
-downloads/
-temp/
 
-# Large data file extensions (catches files in nested directories)
-*.zip
-*.tar.gz
-*.csv
-*.rds
-*.parquet
-*.gpkg
-*.tif
-*.nc
-
-# Targets pipeline cache
+# Pipeline store and outputs (regenerated inside the container)
 _targets/
-_targets.R.bak
+outputs/
 
-# Local R package library & renv caches
+# Local R package library and renv caches
 renv/library/
 renv/staging/
 renv/cache/
-renv/python/
 
-# IDE, Project, and Session artifacts
+# Local R session history and IDE settings
 .Rhistory
 .RData
 .Rproj.user/
-.positron/
 *.Rproj
 
-# Version Control
+# Version control
 .git/
 .gitignore
 
-# Operating System Junk
+# Operating system files
 .DS_Store
 Thumbs.db
