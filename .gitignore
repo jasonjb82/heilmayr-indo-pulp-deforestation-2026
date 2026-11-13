@@ -1,13 +1,15 @@
+# Data downloaded from Zenodo at run time, the targets store and pipeline outputs
+data/
+_targets/
+outputs/
+Rplots.pdf
 
-remote
+# R session and IDE files
 .Rproj.user
 *.Rproj
-*.Rproj
 .Rhistory
+.RData
+
+# Local assistant settings
 CLAUDE.md
-.claude/settings.local.json
-data/ 
-_targets/
-__pycache__/
-*.pyc
-.claude/ 
+.claude/
