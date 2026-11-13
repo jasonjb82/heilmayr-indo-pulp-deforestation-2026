@@ -2,6 +2,18 @@
 ## Project: Indonesia pulp deforestation
 ## Purpose: Create plots of annual land cover change within HTI concessions
 ## Author: Robert Heilmayr and Jason Jon Benedict
+##
+## Pipeline inputs (targets in _targets.R; paths relative to
+##   data/01_data_replication/)
+##        1) hti_annual_lc_file -> 02_out/tables/hti_land_use_change_areas.csv:
+##               Annual land cover areas within each concession.
+##               Produced by scripts/02_data_preparation/01_data_prep.R
+##
+## Pipeline outputs
+##        1) concession_plots_saved -> outputs/figures/concessions/: One
+##               full-size land cover change figure per concession (305).
+##               The SI atlas (R/06_si_concession_atlas.R) renders its own
+##               smaller tiles from the same hti_annual_lc target.
 ## ---------------------------------------------------------
 
 library(tidyverse)
@@ -76,9 +88,12 @@ render_and_save_all_concessions <- function(hti_gav_annual_lc_df, output_dir) {
     filtered_df <- hti_gav_annual_lc_df %>%
       filter(supplier_label == concession_) %>%
       mutate(
+        # The input labels pulpwood as "Cleared for pulp"; the figures use
+        # the manuscript's term
+        class_desc = recode(class_desc, "Cleared for pulp" = "Pulpwood plantation"),
         class_desc = ordered(
           class_desc,
-          levels = c("Forest", "Non-forest", "Cleared for pulp")
+          levels = c("Forest", "Non-forest", "Pulpwood plantation")
         )
       )
 
@@ -115,7 +130,7 @@ render_and_save_all_concessions <- function(hti_gav_annual_lc_df, output_dir) {
         values = c(
           "Forest" = "#009E73",
           "Non-forest" = "#F0E442",
-          "Cleared for pulp" = "#CC79A7"
+          "Pulpwood plantation" = "#CC79A7"
         ),
         breaks = non_zero
       ) +
