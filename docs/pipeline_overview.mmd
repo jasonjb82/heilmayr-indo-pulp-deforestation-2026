@@ -1,0 +1,19 @@
+graph LR
+  Z[("Zenodo input data")] --> B["Data ingestion and cleaning"]
+  B --> F1["Figure 1: deforestation trends"]
+  B --> F2["Figure 2: deforestation by supplier group"]
+  B --> AT["SI concession atlas"]
+  B --> T2["SI expansion areas table"]
+  B --> RS["Remote sensing accuracy (SI 3)"]
+  B --> MAI["Productivity trends (SI 4.1)"]
+  B --> EL["Deforestation elasticity (SI 4.2, 5)"]
+  B --> RF["Pulp expansion model (SI 8)"]
+  RF --> SC["Figure 3: expansion scenarios (SI 4.3, 8.4)"]
+  MAI --> SC
+  F1 --> PS["Paper statistics"]
+  F2 --> PS
+  RS --> PS
+  MAI --> PS
+  EL --> PS
+  SC --> PS
+  PS --> MC["Manuscript check and claims report"]
