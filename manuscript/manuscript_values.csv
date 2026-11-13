@@ -1,0 +1,75 @@
+block,section,value,note
+text_abstract_decline_2011_2017,Abstract,95,decline in pulp-driven deforestation 2011-2017
+text_abstract_scenarios,Abstract,"139,600",additional deforestation (central)
+text_abstract_scenarios,Abstract,"1,000",additional deforestation (low)
+text_abstract_scenarios,Abstract,"359,700",additional deforestation (high)
+text_abstract_scenarios,Abstract,"197,700",additional peatland conversion (central)
+text_abstract_scenarios,Abstract,"40,000",additional peatland conversion (low)
+text_abstract_scenarios,Abstract,"347,500",additional peatland conversion (high)
+text_intro_pulp_defor_2001_2011,Introduction,"682,000",primary rainforest converted to pulpwood 2001-2011
+text_intro_pulp_defor_2001_2011,Introduction,"639,000",95% CI lower
+text_intro_pulp_defor_2001_2011,Introduction,"725,000",95% CI upper
+text_intro_pulp_defor_2001_2011,Introduction,13,share of Indonesian primary forest loss (%)
+text_progress_decline_2011_2017,Progress toward zero deforestation,95,decline in pulp-driven deforestation 2011-2017
+text_productivity_expansion_2001_2011,Improved productivity,1.30,plantation expansion 2001-2011 (million ha)
+text_productivity_expansion_2001_2011,Improved productivity,1.26,95% CI lower
+text_productivity_expansion_2001_2011,Improved productivity,1.34,95% CI upper
+text_productivity_supply_2022,Improved productivity,47,annual pulpwood used for pulp production (million m3)
+text_commitments_ownership,Private commitments to end deforestation,"107,400",primary forest converted to pulpwood 2015-2022 (ha)
+text_commitments_ownership,Private commitments to end deforestation,"3,600",deforestation in APP/APRIL concessions after 2015 (ha)
+text_commitments_ownership,Private commitments to end deforestation,"58,100",deforestation in Sinar Mas/RGE-linked concessions (ha)
+text_commitments_ownership,Private commitments to end deforestation,54,share linked to Sinar Mas/RGE (%)
+text_commitments_ownership,Private commitments to end deforestation,"45,700",residual deforestation not acknowledged or suspected (ha)
+text_boom_decline_2011_2017,An emerging boom in deforestation?,95,decline in pulp-driven deforestation 2011-2017
+text_boom_rates_2017_2022,An emerging boom in deforestation?,"5,600",primary forest conversion rate 2017 (ha/year)
+text_boom_rates_2017_2022,An emerging boom in deforestation?,"24,300",primary forest conversion rate 2022 (ha/year)
+text_boom_rates_2017_2022,An emerging boom in deforestation?,338,increase in forest conversion rate (%)
+text_boom_rates_2017_2022,An emerging boom in deforestation?,"1,400",peat conversion rate 2017 (ha/year)
+text_boom_rates_2017_2022,An emerging boom in deforestation?,"7,800",peat conversion rate 2022 (ha/year)
+text_boom_rates_2017_2022,An emerging boom in deforestation?,446,increase in peat conversion rate (%)
+text_boom_pulp_vs_palm_2022,An emerging boom in deforestation?,TRUE,more forest converted to pulp than to oil palm in 2022
+text_boom_vs_2011_peak,An emerging boom in deforestation?,78,2022 rate below the 2011 peak (%)
+text_mills_capacity_share,New pulp mills and capacity expansion,96,Sinar Mas and RGE share of production capacity (%)
+text_mills_kalimantan_share,New pulp mills and capacity expansion,89,Kalimantan share of pulp-driven deforestation since 2017 (%)
+text_mills_capacity_demand,New pulp mills and capacity expansion,78,increase in pulp capacity (%)
+text_mills_capacity_demand,New pulp mills and capacity expansion,8.53,capacity increase (million tonnes per year)
+text_mills_capacity_demand,New pulp mills and capacity expansion,34,new annual pulpwood demand (million m3)
+text_mills_capacity_demand,New pulp mills and capacity expansion,1.84,plantations needed at historical productivity (million ha)
+text_barriers_productivity_growth,Barriers facing productivity improvements,3.2,productivity growth 2015-2021 (% per year)
+text_barriers_productivity_growth,Barriers facing productivity improvements,2.7,productivity growth CI half-width
+text_barriers_scenarios,Barriers facing productivity improvements,46,demand growth met by productivity gains (%)
+text_barriers_scenarios,Barriers facing productivity improvements,7,lower bound (%)
+text_barriers_scenarios,Barriers facing productivity improvements,91,upper bound (%)
+text_barriers_scenarios,Barriers facing productivity improvements,"733,700",further plantations needed (ha)
+text_barriers_scenarios,Barriers facing productivity improvements,"99,800",lower bound
+text_barriers_scenarios,Barriers facing productivity improvements,"1,513,500",upper bound
+text_barriers_scenarios,Barriers facing productivity improvements,"139,600",additional deforestation (central)
+text_barriers_scenarios,Barriers facing productivity improvements,"1,000",additional deforestation (low)
+text_barriers_scenarios,Barriers facing productivity improvements,"359,700",additional deforestation (high)
+text_barriers_scenarios,Barriers facing productivity improvements,"197,700",additional peatland conversion (central)
+text_barriers_scenarios,Barriers facing productivity improvements,"40,000",additional peatland conversion (low)
+text_barriers_scenarios,Barriers facing productivity improvements,"347,500",additional peatland conversion (high)
+text_wavering_remaining_forest,Wavering domestic policy support for conservation,2.96,primary forest remaining in pulp concessions (million ha)
+text_wavering_remaining_forest,Wavering domestic policy support for conservation,18,share of that forest on peat (%)
+text_wavering_remaining_forest,Wavering domestic policy support for conservation,47,share of that forest in Kalimantan (%)
+text_global_decline_2011_2017,Global implications,95,decline in pulp-driven deforestation 2011-2017
+text_sm4_new_demand,SM Section 4,34.2,new annual pulpwood demand from planned production lines (million m3)
+text_sm4_new_demand,SM Section 4,74,increase over 2022 pulpwood consumption (%)
+text_sm4_area_needed,SM Section 4,34.2,further pulpwood demand from capacity expansions (million m3)
+text_sm4_area_needed,SM Section 4,18.6,net deliverable pulpwood per hectare per year (DMAI)
+text_sm4_area_needed,SM Section 4,1.84,new plantations needed at current productivity (million ha)
+text_sm4_area_needed,SM Section 4,3.2,productivity growth (% per year)
+text_sm4_area_needed,SM Section 4,2.7,productivity growth CI half-width
+text_sm4_area_needed,SM Section 4,25.4,DMAI by 2028 (central)
+text_sm4_area_needed,SM Section 4,21.1,DMAI by 2028 (95% CI lower)
+text_sm4_area_needed,SM Section 4,30.4,DMAI by 2028 (95% CI upper)
+text_sm4_area_needed,SM Section 4,3.14,existing plantation area (million ha)
+text_sm4_area_needed,SM Section 4,15.6,extra pulpwood from yield improvements (million m3; central)
+text_sm4_area_needed,SM Section 4,2.2,extra pulpwood (low)
+text_sm4_area_needed,SM Section 4,31.2,extra pulpwood (high)
+text_sm4_area_needed,SM Section 4,46,demand growth met by productivity gains (%; central)
+text_sm4_area_needed,SM Section 4,6.6,demand growth met (low)
+text_sm4_area_needed,SM Section 4,91.1,demand growth met (high)
+text_sm4_area_needed,SM Section 4,"733,700",additional plantations needed (ha; central)
+text_sm4_area_needed,SM Section 4,"99,800",additional plantations needed (low)
+text_sm4_area_needed,SM Section 4,"1,513,500",additional plantations needed (high)
