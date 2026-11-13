@@ -21,7 +21,7 @@ management and [`renv`](https://rstudio.github.io/renv/) to pin package
 versions. A single `tar_make()` downloads the input data from Zenodo and
 produces:
 
-- Figures 1–3 of the main text and the SI figures
+- Figures 1 and 2 of the main text and the SI figures
 - SI tables and the statements reported in the SI
 - the remote sensing accuracy assessment, plantation productivity trends,
   deforestation price elasticities, the spatial model of pulpwood expansion
@@ -183,6 +183,21 @@ reference.**
    targets::tar_make()
    ```
 
+**Building a single output.** To reproduce one figure or table without
+running the whole pipeline, pass its target name (listed under
+[Where each result comes from](#where-each-result-comes-from)) to
+`tar_make()`. The pipeline then builds that target and only what it needs.
+For example, to build Figure 2:
+
+```r
+targets::tar_make(names = "fig2_png")
+```
+
+Outputs that depend on the pulp expansion model still take 10–30 minutes,
+because the model has to be estimated first. These are SI Figures 6 and 7,
+SI Table 13, the SI Section 8 and scenario statements, and the main-text
+numbers (which include the scenario results).
+
 ---
 
 ## Outputs
@@ -191,8 +206,8 @@ All results are written to `outputs/`:
 
 | Folder | Contents |
 |---|---|
-| `outputs/figures/` | Figures 1–3 and the SI figures (PNG, most also as SVG); per-concession land cover figures in `concessions/` and `concession_tiles/` |
-| `outputs/figure_data/` | Data behind Figures 1–3 and SI Figures 2, 5 and 7 (CSV) |
+| `outputs/figures/` | Figures 1 and 2 and the SI figures (PNG, most also as SVG); per-concession land cover figures in `concessions/` and `concession_tiles/` |
+| `outputs/figure_data/` | Data behind Figures 1 and 2 and SI Figures 2, 5 and 7 (CSV) |
 | `outputs/tables/` | SI tables (CSV and `.docx`), pulp expansion predictions and scenario results |
 | `outputs/text/` | Statements reported in the paper and SI, model diagnostics, and the manuscript check |
 | `outputs/atlas/` | SI concession atlas (PDF) |
@@ -201,6 +216,59 @@ All results are written to `outputs/`:
 `manuscript/manuscript_values.csv` (as printed in the paper) with the value
 the pipeline computes. `outputs/text/claims_report.md` lists each of these
 claims with its check result and the functions and input files it comes from.
+
+### Where each result comes from
+
+Each result in the paper, the target that produces it, and the file it is
+written to (all paths relative to `outputs/`).
+
+**Main text**
+
+| Result | Target | File |
+|---|---|---|
+| Figure 1 | `fig1_files` | `figures/f1_pulp_driven_deforestation.png` (and `.svg`) |
+| Figure 1 data | `fig1_data` | `figure_data/fig1_deforestation_by_island.csv` |
+| Figure 2 | `fig2_png`, `fig2_svg` | `figures/f2_supplier_groups_defor_class_plot.png` (and `.svg`) |
+| Figure 2 data | `fig2_data` | `figure_data/fig2_deforestation_by_ownership_and_class.csv` |
+| Numbers in the main text and SI Section 4 | `paper_stats_txt` | `text/paper_text_snippets.txt` |
+
+**SI figures**
+
+| Result | Target | File |
+|---|---|---|
+| SI Figure 2 | `si_fig2_files`, `si_fig2_data` | `figures/si_f2_pulp_production_by_wood_type.png` (and `.svg`, data in `figure_data/`) |
+| SI Figure 4 | `si_fig4_png` | `figures/si_f4_elasticity.png` |
+| SI Figure 5 | `si_fig5_files`, `si_fig5_data` | `figures/si_f5_policy_timeline.png` (and `.svg`, data in `figure_data/`) |
+| SI Figure 6 | `si_fig6_png` | `figures/si_f6_auc.png` |
+| SI Figure 7 | `si_fig7_png`, `si_fig7_svg`, `si_fig7_data` | `figures/si_f7_expansion_map.png` (and `.svg`, data in `figure_data/`) |
+| SI concession atlas | `concession_atlas_pdf` | `atlas/concession_atlas.pdf` |
+
+**SI tables**
+
+| Result | Target | File |
+|---|---|---|
+| SI Table 2 | `si_table_2_csv` | `tables/pulp_expansion_areas_all_2001_2022.csv` |
+| SI Table 3 | `si_table3_csv` | `tables/si_table3_class_descriptions.csv` |
+| SI Table 4 | `si_table4_csv` | `tables/si_table4_change_map_accuracy.csv` |
+| SI Table 5 | `si_table5_csv` | `tables/si_table5_static_map_accuracy.csv` |
+| SI Table 6 | `si_table6_docx` | `tables/si_table6_yield_growth.docx` |
+| SI Table 8 | `si_table8_csv` | `tables/si_table8_aez_productivity.csv` |
+| SI Tables 9 and 10 | `si_tables9_10_docx` | `tables/si_table9_defor_elasticity.docx`, `tables/si_table10_defor_elasticity_robustness.docx` |
+| SI Table 13 | `si_table13_docx`, `si_table13_data` | `tables/si_table13_expansion_areas.docx` (and `.csv`) |
+
+**SI statements**
+
+| Result | Target | File |
+|---|---|---|
+| SI Section 3 | `si_section3_txt` | `text/si_section3_statements.txt` |
+| SI Sections 4.2 and 5 | `si_sections4_5_txt` | `text/si_sections4_5_statements.txt` |
+| SI Sections 4.3 and 8.4 | `si_sections4_8_txt` | `text/si_sections4_8_statements.txt` |
+| SI Section 8 | `si_section8_txt` | `text/si_section8_statements.txt` |
+
+**Not produced by the pipeline:** SI Figures 1 and 3 (satellite imagery
+examples) and SI Tables 1, 7, 11, 12 and 14, which describe data sources and
+model variables, compile information from the literature and company or
+government reports, or come from analyses run outside the pipeline.
 
 ---
 
