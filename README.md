@@ -304,6 +304,7 @@ Grahat Nagara, David Gaveau
 
 ## License
 
-The code in this repository is released under the MIT License. The input data
+The code in this repository is released under the MIT License (see
+[LICENSE](LICENSE)). The input data
 on Zenodo are released under the Creative Commons Attribution 4.0
 International (CC-BY-4.0) license.
