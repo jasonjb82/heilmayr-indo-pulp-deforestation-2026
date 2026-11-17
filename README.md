@@ -82,6 +82,11 @@ Proprietary pulp and pulpwood price data (Fastmarkets, WRQ) cannot be
 redistributed. The pipeline uses the derived annual price series
 `pulp_prices_annual_2001_2024.csv` included in the Zenodo record.
 
+The annual pulpwood expansion maps (2000–2022) used in the paper are published
+separately by The TreeMap under CC-BY-4.0
+([10.5281/zenodo.24298471](https://doi.org/10.5281/zenodo.24298471)). They are
+not needed to run the pipeline.
+
 ---
 
 ## System requirements
