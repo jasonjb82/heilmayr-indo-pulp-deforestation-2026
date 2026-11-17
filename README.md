@@ -1,5 +1,6 @@
 # Replication package: Rising risk of deforestation in Indonesia’s pulp sector
 
+[![Paper DOI](https://img.shields.io/badge/Paper%20DOI-10.1126%2Fscience.aeb9995-blue.svg)](https://doi.org/10.1126/science.aeb9995)
 [![Data DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20448606.svg)](https://doi.org/10.5281/zenodo.20448606)
 [![R](https://img.shields.io/badge/R-4.5.2-blue.svg)](https://www.r-project.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
@@ -8,6 +9,7 @@ This repository contains the code and `targets` pipeline that reproduce the
 figures, tables and statistics in:
 
 > **Heilmayr, R., Benedict, J. J., Orland, B., Afif, H., Barr, C., Descals, A., Husnayaen, H., Kridalaksana, A., Manurung, T., Nagara, G., & Gaveau, D. (2026).** *Rising risk of deforestation in Indonesia’s pulp sector.* Science.
+> [doi:10.1126/science.aeb9995](https://doi.org/10.1126/science.aeb9995)
 
 The input data are archived on Zenodo:
 [10.5281/zenodo.20448606](https://doi.org/10.5281/zenodo.20448606).
@@ -290,7 +292,8 @@ Grahat Nagara, David Gaveau
   title={Rising risk of deforestation in Indonesia’s pulp sector},
   author={Heilmayr, Robert and Benedict, Jason Jon and Orland, Brian and Afif, Hilman and Barr, Christopher and Descals, Adri{\`a} and Husnayaen, Husnayaen and Kridalaksana, Age and Manurung, Timer and Nagara, Grahat and Gaveau, David},
   journal={Science},
-  year={2026}
+  year={2026},
+  doi={10.1126/science.aeb9995}
 }
 ```
 
